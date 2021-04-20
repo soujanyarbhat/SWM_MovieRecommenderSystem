@@ -16,13 +16,12 @@ def get_db():
     if 'db' not in g:
         g.db = pd.read_csv('output1.csv', index_col=0)
         g.db_ratings = pd.read_csv('output_rating1.csv', index_col=0)
-        g.movie2genre = pd.read_csv('movie2genre1.csv', index_col=0)
         g.db_rated = pd.read_csv('output_rated1.csv', index_col=0)
         g.db_ratings_rated = pd.read_csv('output_rating_rated1.csv', index_col=0)
         g.movies = pd.read_csv('movies.dat', sep = '::', header = None, engine = 'python', encoding = 'latin-1')
         g.movies.columns = ['movieid', 'movie', 'genre']
         print("Datastore loaded successfully")
-    return g.db, g.db_ratings, g.movie2genre, g.db_rated, g.db_ratings_rated, g.movies
+    return g.db, g.db_ratings, g.db_rated, g.db_ratings_rated, g.movies
 
 Bootstrap(app)
 
@@ -32,7 +31,7 @@ class NameForm(FlaskForm):
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    db, db_ratings, db_movie2genre, db_rated, db_ratings_rated, db_movies = get_db()
+    db, db_ratings, db_rated, db_ratings_rated, db_movies = get_db()
     form = NameForm()
     name = form.name.data
     recommendations = []
@@ -49,54 +48,16 @@ def index():
             recommendation = []
             recommendation.append(movies[i])
             recommendation.append(round(movie_rating[i],1))
-            #genre_string = db_movies[db_movies['movie'] == movies[i]]['genre'].astype(str)
-            genre_string = str(db_movies[db_movies['movie'] == movies[i]]['genre']).split(' ')
-            print(genre_string[0])
-            print(genre_string[1])
-            print(genre_string[2])
-            print(genre_string[3])
-            #genre_string1 = genre_string.split(' ')[1]
-            # genre = set()
-            #
-            # if movies[i] in db_movie2genre.index:
-            #     genres = str(db_movie2genre.loc[movies[i]])
-            #     genres = genres.split("Name: ")[0]
-            #     genres = genres.replace(' ', '|')
-            #     genres = genres.split('|')
-            #     for s in genres:
-            #         if s != '' and s not in genre:
-            #             genre.add(s)
-            # else:
-            #     l = ["Action","Animation","Children's","Romance","Drama","War","Comedy","Documentary"]
-            #     x = random.randint(2,5)
-            #     for i in range(x):
-            #         genre.add(l[random.randint(0,7)])
-            #     # l = ["Comedy", "Animation","Romantic","Action"]
-            #     # for i in range(0, Math.random(3)+1):
-            #     #     int r = (Math.random(i)+1)
+            genre_string = db_movies[db_movies['movie'] == movies[i]]['genre'].values
             recommendation.append(genre_string)
-            #recommendation.append(', '.join(genre))
             recommendations.append(recommendation)
 
         for i in range(0, len(movies_rated)):
             watch = []
             watch.append(movies_rated[i])
             watch.append(round(movie_rating_rated[i],1))
-            genre = set()
-            if movies_rated[i] in db_movie2genre.index:
-                genres = str(db_movie2genre.loc[movies_rated[i]])
-                genres = genres.split("Name: ")[0]
-                genres = genres.replace(' ', '|')
-                genres = genres.split('|')
-                for s in genres:
-                    if s != '' and s not in genre:
-                        genre.add(s)
-            else:
-                l = ["Action","Animation","Children's","Romance","Drama","War","Comedy","Documentary"]
-                x = random.randint(2,5)
-                for i in range(x):
-                    genre.add(l[random.randint(0,7)])
-            watch.append(', '.join(genre))
+            genre_string = db_movies[db_movies['movie'] == movies_rated[i]]['genre'].values
+            watch.append(genre_string)
             watched.append(watch)
     else:
         form.name = None
