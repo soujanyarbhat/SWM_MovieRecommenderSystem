@@ -1,0 +1,56 @@
+{% extends 'bootstrap/base.html' %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block styles %}
+{{ super() }}
+	<style type="text/css">
+	    th:tr{
+	        color: blue;
+	    }
+	    tr:nth-of-type(2n){
+	        border: 1px solid black;
+	        background-color: rgba(150, 150, 150, 0.5);
+
+	    }
+	    td{
+	        padding: 8px 8px;
+	        border: 1px solid black;
+	    }
+	</style>
+{% endblock %}
+
+{% block title %}
+Top movie recommendations
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-10 col-lg-8 mx-lg-auto mx-md-auto">
+      <h1 class="pt-5 pb-2">Welcome!</h1>
+      <p class="lead">This project provides the top 10 movie recommendations for any user in the MovieLens 1M dataset.</p>
+      {{ wtf.quick_form(form) }}
+			{% if names != None and names != "" %}
+			<h3 class="pt-3 pb-2">Top recommendations for user {{ names }}:</h3>
+			<table style="margin-left: 20px;">
+    <th>
+        <tr class="pt-5 pb-2" style="color: black; ">
+        <td>#</td>
+        <td>Movie</td>
+				<td>Rating</td>
+</tr>
+    </th>
+{%for key, value in message.items()%}
+<tr>
+    <td>{{loop.index}}</td>
+    <td>{{key}}</td>
+		<td>{{value}}</td>
+{%endfor%}
+</tr>
+</table>
+{% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}
